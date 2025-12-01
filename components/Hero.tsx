@@ -39,7 +39,7 @@ export default function Hero() {
       </motion.div>
 
       <motion.img
-        src="https://ui-avatars.com/api/?name=Diego&size=256&background=0f172a&color=3b82f6"
+        src="https://ui-avatars.com/api/?name=Diego&background=3b82f6&color=fff"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8 }}
