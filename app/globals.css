@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/* Variables CSS globales */
+:root {
+  /* Colores base */
+  --color-light: #f8fafc;      /* brand-light */
+  --color-dark: #0f172a;       /* brand-dark */
+  --color-primary: #3b82f6;    /* primary */
+  --color-primary-dark: #1d4ed8;
+  
+  /* Modo claro (default) */
+  --color-bg: var(--color-light);
+  --color-text: var(--color-dark);
+  --color-card: #f1f5f9;       /* fondo de tarjetas claro */
+  --color-muted: #64748b;      /* texto secundario */
+}
+
+/* Modo oscuro */
+.dark {
+  --color-bg: var(--color-dark);
+  --color-text: var(--color-light);
+  --color-card: #1e293b;       /* fondo de tarjetas oscuro */
+  --color-muted: #94a3b8;      /* texto secundario oscuro */
+}
+
+/* Tema de Tailwind */
+@theme {
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+  --color-primary: var(--color-primary);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-card: var(--color-card);
+  --color-muted: var(--color-muted);
+}
+
+/* Estilos base */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+  }
+}
+
+/* Utilidades personalizadas */
+@layer utilities {
+  .bg-card {
+    background-color: var(--color-card);
+  }
+  
+  .text-muted {
+    color: var(--color-muted);
+  }
+}
