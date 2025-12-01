@@ -1,130 +1,137 @@
 "use client";
 import { motion } from "framer-motion";
-import emailjs from "emailjs-com";
+import emailjs from "emailjs-com";  // ← Ya tienes esta importación
 import { useState } from "react";
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Reemplaza con tus credenciales reales de EmailJS
-    emailjs
-      .sendForm(
-        "service_id",     // Tu Service ID
-        "template_id",    // Tu Template ID
-        e.target as HTMLFormElement, 
-        "public_key"      // Tu Public Key
-      )
-      .then(() => setSent(true))
-      .catch((error) => console.error("Error:", error));
+    setLoading(true);
+    setError("");
+
+    try {
+      const result = await emailjs.sendForm(
+        "service_iosfots",
+        "template_30wbt02", 
+        e.currentTarget,
+        "h8KvP6JHDQk56UhRw"
+      );
+
+      console.log("EmailJS result:", result);
+      
+      if (result.status === 200) {
+        setSent(true);
+        (e.target as HTMLFormElement).reset();
+      }
+    } catch (error: any) {
+      console.error("Error completo:", error);
+      if (error.text) {
+        setError(`Error: ${error.text}`);
+      } else {
+        setError("Error al enviar. Por favor intenta nuevamente.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return (
-    <section id="contact" className="mt-32 mb-20">
-      <h3 className="text-4xl font-bold mb-10 text-center">Contáctame</h3>
-
-      {sent ? (
+  if (sent) {
+    return (
+      <section id="contact" className="mt-32 mb-20 px-6">
+        <h3 className="text-4xl font-bold mb-12 text-center">Contáctame</h3>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="
-            p-6 
-            bg-green-50 dark:bg-green-900/20
-            text-green-700 dark:text-green-400 
-            rounded-2xl 
-            border border-green-200 dark:border-green-800
-            max-w-lg mx-auto  // 👈 Centrado
-          "
+          className="max-w-lg mx-auto p-8 text-center bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-2xl border border-green-200 dark:border-green-800"
         >
-          <p className="text-xl font-semibold text-center">¡Mensaje enviado con éxito!</p>
-          <p className="mt-2 text-muted text-center">
-            Te responderé lo antes posible.
+          <div className="text-5xl mb-4">✅</div>
+          <p className="text-2xl font-semibold mb-3">¡Mensaje enviado!</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Gracias por contactarme. Te responderé lo antes posible.
           </p>
-        </motion.div>
-      ) : (
-        <div className="flex justify-center"> {/* 👈 Contenedor para centrar */}
-          <motion.form
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col max-w-lg gap-6 w-full" // 👈 w-full para que ocupe el ancho disponible
-            onSubmit={handleSubmit}
+          <button
+            onClick={() => setSent(false)}
+            className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
           >
+            Enviar otro mensaje
+          </button>
+        </motion.div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="contact" className="mt-32 mb-20 px-6">
+      <h3 className="text-4xl font-bold mb-12 text-center">Contáctame</h3>
+
+      <div className="flex justify-center">
+        <motion.form
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col max-w-lg w-full gap-6"
+          onSubmit={handleSubmit}
+        >
+          {error && (
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-xl text-center">
+              {error}
+            </div>
+          )}
+
+          <div>
             <input
-              name="name"
+              name="from_name"
+              type="text"
               placeholder="Tu nombre"
               required
-              className="
-                px-4 py-3 
-                bg-card 
-                text-foreground 
-                rounded-xl 
-                outline-none 
-                border border-gray-300 dark:border-gray-700
-                focus:border-primary focus:ring-2 focus:ring-primary/20
-                transition-all
-              "
+              disabled={loading}
+              className="w-full px-5 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl outline-none border border-gray-300 dark:border-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-gray-500 disabled:opacity-50"
             />
-            
+          </div>
+
+          <div>
             <input
-              name="email"
+              name="from_email"
               type="email"
               placeholder="Tu correo electrónico"
               required
-              className="
-                px-4 py-3 
-                bg-card 
-                text-foreground 
-                rounded-xl 
-                outline-none 
-                border border-gray-300 dark:border-gray-700
-                focus:border-primary focus:ring-2 focus:ring-primary/20
-                transition-all
-              "
+              disabled={loading}
+              className="w-full px-5 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl outline-none border border-gray-300 dark:border-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-gray-500 disabled:opacity-50"
             />
-            
+          </div>
+
+          <div>
             <textarea
               name="message"
               rows={5}
               placeholder="Tu mensaje..."
               required
-              className="
-                px-4 py-3 
-                bg-card 
-                text-foreground 
-                rounded-xl 
-                outline-none 
-                border border-gray-300 dark:border-gray-700
-                focus:border-primary focus:ring-2 focus:ring-primary/20
-                transition-all
-                resize-none
-              "
+              disabled={loading}
+              className="w-full px-5 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl outline-none border border-gray-300 dark:border-gray-700 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-gray-500 resize-none disabled:opacity-50"
             />
-            
-            <button
-              type="submit"
-              className="
-                bg-primary 
-                text-white 
-                px-8 py-3 
-                rounded-xl 
-                text-lg 
-                font-semibold 
-                hover:bg-primary-dark 
-                transition-all duration-300
-                shadow-lg hover:shadow-xl
-                active:scale-95
-                w-full md:w-auto  // 👈 Ancho completo en móvil, automático en desktop
-                self-center md:self-start  // 👈 Centrado en móvil, alineado a la izquierda en desktop
-              "
-            >
-              Enviar mensaje
-            </button>
-          </motion.form>
-        </div>
-      )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary-dark disabled:bg-gray-400 transition-all duration-300 flex items-center justify-center gap-2 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Enviando...
+              </>
+            ) : (
+              "Enviar mensaje"
+            )}
+          </button>
+        </motion.form>
+      </div>
     </section>
   );
 }
